@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<!-- [if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+     <![endif]-->
+     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+     <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
+     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
+     <script type="text/javascript" src="js/ko-enter.js"></script>
+     <script type="text/javascript" src="notifyBar/jquery.notifyBar.js"></script>
+     <link rel="stylesheet" href="notifyBar/css/jquery.notifyBar.css"/>
+     <script type="text/javascript" src="model.js"></script>
+     <link rel="stylesheet" href="css/style.css"/>
+	<title>Page</title>
+</head>
+
+<body>
+
+<div id="tagsList" class="box">
+    <div class="box-head">
+        <h2 class="left">Tags CRUD</h2>
+    </div>
+    <div class="box-content">
+        <!-- Поле для нового тега -->
+        <input type="text" placeholder="Add New Tag" data-bind="value: tagToAdd, valueUpdate: 'afterkeydown', onEnter: addTag" />
+        <button class="button" data-bind="click: addTag, enable: tagToAdd().length > 0">+ Add</button>
+        <!-- Вывод тегов -->
+        <ul data-bind="foreach: showCurrentPage">
+            <li class="tagItem">
+            <span data-bind="text: $data.tagTitle"></span>
+                <div>
+                    <a href="#" class="tag-edit" data-bind="click: $parent.editTag">Edit</a> 
+                    <a href="#" class="tag-delete" data-bind="click: $parent.deleteTag">Delete</a>
+                </div>
+            </li>
+        </ul>
+        
+        <nav id="paging">
+        <a id="all" href="#" data-bind="click: function () { pageSize(ko.utils.unwrapObservable(availableTags).length); currentPage(0); }, css: { disabled: pageSize() === ko.utils.unwrapObservable(availableTags).length }">Show all</a>
+        <a id="last" title="Last Page" href="#" data-bind="click: function() { currentPage(totalPages() - 1); }, css: { disabled: currentPage() === totalPages() - 1 }">Last</a>
+        <a id="next" title="Next Page" href="#" data-bind="click: function (data, event) { navigate(event) }, css: { disabled: currentPage() === totalPages() - 1 }">&gt;&gt;</a>
+        <ul data-bind="template: 'pagingTemplate'"></ul>
+        <a id="prev" title="Previous Page" href="#" data-bind="click: function (data, event) { navigate(event) }, css: { disabled: currentPage() === 0 }">&lt;&lt;</a>
+        <a id="first" title="First Page" href="#" data-bind="click: function() { currentPage(0); }, css: { disabled: currentPage() === 0 }">First</a>
+        </nav>
+        <label id="pageSize">Show <input data-bind="value: pageSize" /> per page</label>
+        <script id="pagingTemplate" type="text/html">
+            {{each(i) ko.utils.range(1, totalPages)}} 
+                <li>
+                    <a href="#" title="View page ${ i + 1 }" data-bind="click: function() { currentPage(i) }, css: { on: i === currentPage() }">${ i + 1 }</a>
+                </li>
+            {{/each}}
+        </script>
+        
+    </div><!--end box-content -->
+    <br style="clear:both;"/>
+    <hr class="beforealphaFilter"/>
+    <div id="alphaFilter">
+        <span>Filter name by:</span>
+        <ul data-bind="template: 'letterTemplate'"></ul>
+        <a id="clear" href="#" title="Clear Filter" data-bind="click: clearLetter, css: { disabled: filterLetter() === ''}">Clear filter</a>
+        
+        <fieldset id="searchForm">
+           <span>Search for:</span><br />
+           <button type="button" data-bind="click: search, disable: filterTerm" >Go</button>
+           <input id="term" placeholder="Search…" data-bind="value: query" autocomplete="off"/>
+           <a data-bind="visible: filterTerm, click: clearTerm" title="Clear search" href="#">x</a>
+        </fieldset>
+    </div>
+    
+    <script id="letterTemplate" type="text/x-jquery-tmpl">
+    {{each(i, val) $root.letters}}
+       <li>
+          <a href="#" title="Filter name by ${ val }" data-bind="click: function() { 
+             filterLetter(val); getTagsByLetter(val); }, 
+             css: { disabled: val === filterLetter() }">
+             ${ val }
+          </a>
+       </li>
+    {{/each}}
+    </script> 
+    
+</div><!-- end tagsList -->
+
+</body>
+</html>
