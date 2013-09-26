@@ -90,7 +90,7 @@ Requires PHP-code in response.php file with this code:
             }
     
     }
-?>    
+
 
 All other features like Search and Alphabet filter are implemented with javascript-code
 and don't need php-code and seach in mysql database.
